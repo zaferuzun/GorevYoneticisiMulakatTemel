@@ -1,4 +1,4 @@
-﻿@model IEnumerable<GörevYöneticisiMulakatTemel.Models.Jobs>
+﻿@model IEnumerable<GörevYöneticisiMulakatTemel.ViewModel.JobsVM>
 
 @{
     ViewBag.Title = "Index";
@@ -12,34 +12,34 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.JobComment)
-        </th>
-        <th>
             @Html.DisplayNameFor(model => model.JobType)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Users.UserName)
+            @Html.DisplayNameFor(model => model.JobComment)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.JobDate)
         </th>
         <th></th>
     </tr>
 
 @foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.JobComment)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.JobType)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Users.UserName)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.JobId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.JobId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.JobId })
-        </td>
-    </tr>
+<tr>
+    <td>
+        @Html.DisplayFor(modelItem => item.JobType)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.JobComment)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.JobDate)
+    </td>
+    <td>
+        @Html.ActionLink("Edit", "Edit", new { id = item.JobId }) |
+        @Html.ActionLink("Details", "Details", new { id = item.JobId }) |
+        @Html.ActionLink("Delete", "Delete", new { id = item.JobId })
+    </td>
+</tr>
 }
 
 </table>

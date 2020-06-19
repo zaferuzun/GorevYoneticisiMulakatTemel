@@ -18,6 +18,7 @@ namespace GörevYöneticisiMulakatTemel.Models
         public Nullable<int> UserId { get; set; }
         public string JobComment { get; set; }
         public string JobType { get; set; }
+        public System.DateTime JobDate { get; set; }
     
         public virtual Users Users { get; set; }
     }

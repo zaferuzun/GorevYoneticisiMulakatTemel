@@ -7,6 +7,8 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using GörevYöneticisiMulakatTemel.Models;
+using GörevYöneticisiMulakatTemel.ViewModel;
+
 namespace GörevYöneticisiMulakatTemel.Controllers
 {
     public class UsersController : Controller
@@ -21,11 +23,15 @@ namespace GörevYöneticisiMulakatTemel.Controllers
         // POST: Users/Login
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Login(Users objUser)
+        public ActionResult Login(UsersVM G_users)
         {
             if (ModelState.IsValid)
             {
-                var obj = db.Users.Where(a => a.UserName == objUser.UserName && a.UserPassword == objUser.UserPassword).FirstOrDefault();
+                //Users P_users = new Users();
+                //P_users.UserName = G_users.UserName;
+                //P_users.UserPassword = G_users.UserPassword;
+
+                var obj = db.Users.Where(a => a.UserName == G_users.UserName && a.UserPassword == G_users.UserPassword).FirstOrDefault();
                 if (obj != null)
                 {
                     string r = "../Jobs/Index/" + obj.UserId.ToString();
@@ -36,36 +42,40 @@ namespace GörevYöneticisiMulakatTemel.Controllers
                     ModelState.AddModelError("", "Kullanıcı adı veya şifreyi yanlış girdiniz.");
                 }
             }
-            return View(objUser);
+            return View(G_users);
         }
 
         // GET: Users/Register
         public ActionResult Register()
         {
-
-            return View();
+            UsersVM P_users = new UsersVM();
+            return View(P_users);
         }
 
         // POST: Users/Register
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Register(Users users)
+        public ActionResult Register(UsersVM G_users)
         {
 
             // Kullanıcı adı bulunmasındaki hata
-            if (db.Users.Any(model => model.UserName == users.UserName))
+            if (db.Users.Any(model => model.UserName == G_users.UserName))
             {
                 ModelState.AddModelError("UserName", "Bu kullanıcı adı bulunmaktadır.");
             }
             if (ModelState.IsValid)
             {
-                db.Users.Add(users);
+                Users P_users = new Users();
+                P_users.UserName = G_users.UserName;
+                P_users.UserPassword = G_users.UserPassword;
+
+                db.Users.Add(P_users);
                 db.SaveChanges();
                 string r = "../Users/Login";
                 return RedirectToAction(r);
             }
 
-            return View(users);
+            return View(G_users);
         }
 
 

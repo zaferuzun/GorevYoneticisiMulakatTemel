@@ -1,4 +1,5 @@
 ﻿using GörevYöneticisiMulakatTemel.Models;
+using GörevYöneticisiMulakatTemel.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -32,30 +33,33 @@ namespace GörevYöneticisiMulakatTemel.Controllers
         // GET: Jobs
         public ActionResult Index(int? id)
         {
-            var jobs = db.Jobs.Include(j => j.Users);
-            return View(jobs.ToList());
+            var G_jobs = db.Jobs.Include(c => c.Users);
+            GlobalVar.UserId = id.ToString();
+            var G_job = from e in G_jobs
+                        where e.Users.UserId == id
+                            select e;
+
+            List<JobsVM> P_jobsList = new List<JobsVM>() ;
+
+            foreach (var item in G_job)
+            {
+                JobsVM P_job = new JobsVM();
+                P_job.JobType = item.JobType;
+                P_job.JobId = item.JobId;
+                P_job.JobComment = item.JobComment;
+                P_job.JobDate = Convert.ToDateTime(item.JobDate);
+                P_jobsList.Add(P_job);
+            }
+            return View(P_jobsList.ToList());
         }
 
-        // GET: Jobs/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Jobs jobs = db.Jobs.Find(id);
-            if (jobs == null)
-            {
-                return HttpNotFound();
-            }
-            return View(jobs);
-        }
 
         // GET: Jobs/Create
         public ActionResult Create()
         {
-            ViewBag.UserId = new SelectList(db.Users, "UserId", "UserName");
-            return View();
+            JobsVM P_jobs = new JobsVM();
+            P_jobs.getTypeList = P_jobs.getAllList();
+            return View(P_jobs);
         }
 
         // POST: Jobs/Create
@@ -63,18 +67,26 @@ namespace GörevYöneticisiMulakatTemel.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "JobId,UserId,JobComment,JobType")] Jobs jobs)
+        public ActionResult Create(JobsVM G_job)
         {
             if (ModelState.IsValid)
             {
-                db.Jobs.Add(jobs);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
+                Jobs P_job = new Jobs();
 
-            ViewBag.UserId = new SelectList(db.Users, "UserId", "UserName", jobs.UserId);
-            return View(jobs);
+                P_job.JobDate = G_job.JobDate;
+                P_job.JobType = G_job.JobType;
+                P_job.JobComment = G_job.JobComment;
+                P_job.UserId = Convert.ToInt32(GlobalVar.UserId);
+
+                db.Jobs.Add(P_job);
+                db.SaveChanges();
+                return RedirectToAction("Index/"+ GlobalVar.UserId);
+            }
+            G_job.getTypeList = G_job.getAllList();
+
+            return View(G_job);
         }
+        // userid olmazsa logine yönlendir
 
         // GET: Jobs/Edit/5
         public ActionResult Edit(int? id)
@@ -83,13 +95,23 @@ namespace GörevYöneticisiMulakatTemel.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Jobs jobs = db.Jobs.Find(id);
-            if (jobs == null)
+            Jobs G_job = db.Jobs.Find(id);
+
+            if (G_job == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.UserId = new SelectList(db.Users, "UserId", "UserName", jobs.UserId);
-            return View(jobs);
+
+            JobsVM P_job = new JobsVM();
+            P_job.JobId = G_job.JobId;
+            P_job.JobType = G_job.JobType;
+            P_job.JobComment = G_job.JobComment;
+            P_job.JobDate = G_job.JobDate;
+            P_job.getTypeList = P_job.getAllList();
+
+
+
+            return View(P_job);
         }
 
         // POST: Jobs/Edit/5
@@ -97,16 +119,22 @@ namespace GörevYöneticisiMulakatTemel.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "JobId,UserId,JobComment,JobType")] Jobs jobs)
+        public ActionResult Edit( JobsVM G_job)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(jobs).State = EntityState.Modified;
+                Jobs P_job = new Jobs();
+                P_job.JobId = G_job.JobId;
+                P_job.JobDate = G_job.JobDate;
+                P_job.JobType = G_job.JobType;
+                P_job.JobComment = G_job.JobComment;
+                P_job.UserId = Convert.ToInt32(GlobalVar.UserId);
+
+                db.Entry(P_job).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Index/" + GlobalVar.UserId);
             }
-            ViewBag.UserId = new SelectList(db.Users, "UserId", "UserName", jobs.UserId);
-            return View(jobs);
+            return View(G_job);
         }
 
         // GET: Jobs/Delete/5
@@ -132,7 +160,7 @@ namespace GörevYöneticisiMulakatTemel.Controllers
             Jobs jobs = db.Jobs.Find(id);
             db.Jobs.Remove(jobs);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction("Index/" + GlobalVar.UserId);
         }
 
         protected override void Dispose(bool disposing)
