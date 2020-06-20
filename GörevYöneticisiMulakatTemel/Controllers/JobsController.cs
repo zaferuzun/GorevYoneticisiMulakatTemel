@@ -48,6 +48,7 @@ namespace GörevYöneticisiMulakatTemel.Controllers
                 P_job.JobId = item.JobId;
                 P_job.JobComment = item.JobComment;
                 P_job.JobDate = Convert.ToDateTime(item.JobDate);
+                P_job.JobDefinition = Operations.DateCount(P_job.JobDate, P_job.JobType);
                 P_jobsList.Add(P_job);
             }
             return View(P_jobsList.ToList());
@@ -72,8 +73,13 @@ namespace GörevYöneticisiMulakatTemel.Controllers
             if (ModelState.IsValid)
             {
                 Jobs P_job = new Jobs();
+                DateTime P_date = DateTime.Now ;
+                string P_dateS = P_date.Hour + "," + P_date.Minute;
+                double P_dateD = Convert.ToDouble(P_dateS);
 
-                P_job.JobDate = G_job.JobDate;
+                P_job.JobDate = G_job.JobDate.AddHours(P_date.Hour).AddMinutes(P_date.Minute);
+
+
                 P_job.JobType = G_job.JobType;
                 P_job.JobComment = G_job.JobComment;
                 P_job.UserId = Convert.ToInt32(GlobalVar.UserId);
@@ -144,12 +150,18 @@ namespace GörevYöneticisiMulakatTemel.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Jobs jobs = db.Jobs.Find(id);
-            if (jobs == null)
+            Jobs G_job = db.Jobs.Find(id);
+
+            JobsVM P_job = new JobsVM();
+            P_job.JobId = G_job.JobId;
+            P_job.JobType = G_job.JobType;
+            P_job.JobComment = G_job.JobComment;
+            P_job.JobDate = G_job.JobDate;
+            if (G_job == null)
             {
                 return HttpNotFound();
             }
-            return View(jobs);
+            return View(P_job);
         }
 
         // POST: Jobs/Delete/5
@@ -157,8 +169,8 @@ namespace GörevYöneticisiMulakatTemel.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Jobs jobs = db.Jobs.Find(id);
-            db.Jobs.Remove(jobs);
+            Jobs G_job = db.Jobs.Find(id);
+            db.Jobs.Remove(G_job);
             db.SaveChanges();
             return RedirectToAction("Index/" + GlobalVar.UserId);
         }

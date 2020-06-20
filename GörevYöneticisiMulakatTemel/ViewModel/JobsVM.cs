@@ -13,7 +13,7 @@ namespace GörevYöneticisiMulakatTemel.ViewModel
         public int UserId { get; set; }
 
         [Required(ErrorMessage = "{0} alanı boş geçilemez!")]
-        [StringLength(30, ErrorMessage = "{0} alanı en az 2 karakter uzunluğunda olmalıdır!", MinimumLength = 2)]
+        [StringLength(30, ErrorMessage = "{0} alanı en az {2}, en fazla {1}    karakter uzunluğunda olmalıdır!", MinimumLength = 2)]
         [Display(Name = "İş Tanımı")]
         public string JobComment { get; set; }
 
@@ -23,8 +23,9 @@ namespace GörevYöneticisiMulakatTemel.ViewModel
         [Required(ErrorMessage = "{0} alanı boş geçilemez!")]
         [Display(Name = "İş Tarihi")]
         [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = true)]
         public DateTime JobDate { get; set; }
+
+        public string JobDefinition { get; set; }
 
         public List<SelectListItem> getTypeList { get; set; }
         public List<SelectListItem> getAllList()

@@ -20,6 +20,9 @@
         <th>
             @Html.DisplayNameFor(model => model.JobDate)
         </th>
+        <th>
+            @Html.DisplayNameFor(model => model.JobDefinition)
+        </th>
         <th></th>
     </tr>
 
@@ -35,8 +38,10 @@
         @Html.DisplayFor(modelItem => item.JobDate)
     </td>
     <td>
+        @Html.DisplayFor(modelItem => item.JobDefinition)
+    </td>
+    <td>
         @Html.ActionLink("Edit", "Edit", new { id = item.JobId }) |
-        @Html.ActionLink("Details", "Details", new { id = item.JobId }) |
         @Html.ActionLink("Delete", "Delete", new { id = item.JobId })
     </td>
 </tr>
