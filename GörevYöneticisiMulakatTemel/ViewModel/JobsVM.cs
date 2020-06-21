@@ -25,6 +25,7 @@ namespace GörevYöneticisiMulakatTemel.ViewModel
         [DataType(DataType.Date)]
         public DateTime JobDate { get; set; }
 
+        [Display(Name = "İş Açıklaması")]
         public string JobDefinition { get; set; }
 
         public List<SelectListItem> getTypeList { get; set; }
